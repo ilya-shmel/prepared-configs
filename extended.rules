@@ -1,0 +1,188 @@
+-i
+--reset-lost
+-a never,exit -F arch=b64 -S execve -F exe=/usr/sbin/crond
+-a never,exit -F arch=b64 -S execve -F exe=/lib/systemd/systemd-logind
+-a never,filesystem -F fstype=tracefs
+-a never,filesystem -F fstype=debugfs
+-a exclude,never -F msgtype=BPRM_FCAPS
+
+## kernel modules
+-a always,exit -F arch=b64 -S finit_module,init_module,delete_module -F auid!=unset
+-a always,exit -F arch=b64 -S finit_module,init_module,delete_module -F auid!=unset
+-a always,exit -F arch=b64 -S socket -F a0=2
+-a always,exit -F arch=b32 -S socket -F a0=2
+-a always,exit -F arch=b64 -S socket -F a0=0xa
+-a always,exit -F arch=b32 -S socket -F a0=0xa
+-a always,exit -F arch=b64 -S socket -F a0=0x11
+-a always,exit -F arch=b32 -S socket -F a0=0x11
+-a always,exit -F arch=b64 -S execve,execveat -F auid=unset -F euid>=0 -F euid<1000
+-a always,exit -F arch=b32 -S execve,execveat -F auid=unset -F euid>=0 -F euid<1000
+
+## listen
+-a always,exit -F arch=b64 -S listen
+-a always,exit -F arch=b32 -S listen
+
+## process UID/GID
+-a always,exit -F arch=b64 -S setuid,setgid,setreuid,setregid
+-a always,exit -F arch=b32 -S setuid,setgid,setreuid,setregid
+
+## process tracing
+-a always,exit -F arch=b64 -S ptrace
+-a always,exit -F arch=b32 -S ptrace
+
+## capabilities
+#-a always,exit -F arch=b64 -S capset
+#-a always,exit -F arch=b32 -S capset
+
+
+## ACLs and file attributes
+
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr
+-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr
+
+## time
+-a exit,always -F arch=b64 -S adjtimex,settimeofday,clock_settime
+-a exit,always -F arch=b32 -S adjtimex,settimeofday,clock_settime
+
+## hostname
+-a always,exit -F arch=b64 -S sethostname,setdomainname
+-a always,exit -F arch=b32 -S sethostname,setdomainname
+
+## pam
+-a always,exit -F dir=/etc/pam.d -F perm=wa -F
+-a always,exit -F dir=/etc/security -F perm=wa -F
+
+## passwd
+-a always,exit -F path=/etc/passwd -F auid!=unset -F auid>=1000 -F perm=r
+-a always,exit -F path=/etc/group -F auid!=unset -F auid>=1000 -F perm=r
+-a always,exit -F path=/etc/shadow -F perm=r -F auid!=unset
+-a always,exit -F path=/etc/passwd -F perm=wa
+-a always,exit -F path=/etc/group -F perm=wa
+-a always,exit -F path=/etc/shadow -F perm=wa
+-a always,exit -F path=/etc/gshadow -F perm=wa
+
+## COD
+-a always,exit -F path=/etc/sssd/sssd.conf -F perm=wa
+-a always,exit -F path=/etc/nsswitch.conf -F perm=wa
+-a always,exit -F path=/etc/krb5.conf -F perm=wa
+-a always,exit -F path=/etc/krb5.conf.d -F perm=wa
+-a always,exit -F path=/etc/krb5.keytab -F perm=wa
+
+## pki
+-a always,exit -F path=/etc/pki/ca-trust -F perm=wa
+
+## audit
+-a always,exit -F path=/etc/libaudit.conf -F perm=wa
+-a always,exit -F dir=/etc/audit -F perm=wa
+
+## init
+-a always,exit -F path=/etc/fstab -F perm=wa
+-a always,exit -F dir=/etc/sysconfig -F perm=wa
+## network
+-a always,exit -F path=/etc/issue -F perm=wa
+-a always,exit -F path=/etc/issue.net -F perm=wa
+-a always,exit -F path=/etc/hosts -F perm=wa
+-a always,exit -F path=/etc/hostname -F perm=wa
+-a always,exit -F path=/etc/resolv.conf -F perm=wa
+-a always,exit -F dir=/etc/NetworkManager -F perm=wa
+
+## login defaults
+-a always,exit -F path=/etc/login.defs -F perm=wa
+-a always,exit -F path=/etc/securetty -F perm=wa
+
+## profiles
+-a always,exit -F path=/etc/bashrc -F perm=wa
+-a always,exit -F path=/etc/profile -F perm=wa
+-a always,exit -F path=/etc/profile.d -F perm=wa
+-a always,exit -F path=/etc/skel -F perm=wa
+
+## package management
+-a always,exit -F path=/etc/yum.conf -F perm=wa
+-a always,exit -F dir=/etc/yum -F perm=wa
+-a always,exit -F dir=/etc/yum.repos.d -F perm=wa
+
+## mail
+-a always,exit -F path=/etc/postfix -F perm=wa
+-a always,exit -F path=/etc/aliases -F perm=wa
+
+## ntp
+-a always,exit -F path=/etc/ntp.conf -F perm=wa
+
+## syslog
+-a always,exit -F path=/etc/rsyslog.conf -F perm=wa
+-a always,exit -F path=/etc/rsyslog.d -F perm=wa
+
+## kernel
+-a always,exit -F path=/etc/sysctl.conf -F perm=wa
+-a always,exit -F path=/etc/sysctl.d -F perm=wa
+-a always,exit -F path=/etc/modprobe.d -F perm=wa
+
+## logrotate
+-a always,exit -F path=/etc/logrotate.conf -F perm=wa
+-a always,exit -F path=/etc/logrotate.d -F perm=wa
+
+## mandatory access control
+-a always,exit -F path=/etc/selinux/config -F perm=wa
+
+## ssh
+-a always,exit -F path=/etc/ssh -F perm=wa
+
+## ld.so
+-a always,exit -F path=/etc/ld.so.conf -F perm=wa
+-a always,exit -F path=/etc/ld.so.conf.d -F perm=wa
+
+## sudo
+-a always,exit -F path=/etc/sudoers.d -F perm=r
+-a always,exit -F path=/etc/sudoers -F perm=r
+-a always,exit -F path=/etc/sudoers.d -F perm=wa
+-a always,exit -F path=/etc/sudoers -F perm=wa
+-a always,exit -F path=/etc/sudo.conf -F perm=wa
+-a always,exit -F path=/etc/sudo-ldap.conf -F perm=wa
+
+## scheduler
+-a always,exit -F path=/etc/cron.allow -F perm=wa
+-a always,exit -F path=/etc/cron.deny -F perm=wa
+-a always,exit -F path=/etc/cron.d -F perm=wa
+-a always,exit -F path=/etc/cron.daily -F perm=wa
+-a always,exit -F path=/etc/cron.hourly -F perm=wa
+-a always,exit -F path=/etc/cron.monthly -F perm=wa
+
+## boot
+-a always,exit -F dir=/boot -F perm=wa
+
+## bin
+-a always,exit -F dir=/bin -F perm=wa
+-a always,exit -F dir=/usr/bin -F perm=wa
+-a always,exit -F dir=/sbin -F perm=wa
+-a always,exit -F dir=/usr/sbin -F perm=wa
+-a always,exit -F dir=/usr/local/bin -F perm=wa
+-a always,exit -F dir=/usr/local/sbin -F perm=wa
+-a always,exit -F dir=/usr/libexec -F perm=wa
+
+## lib
+-a always,exit -F dir=/lib64 -F perm=wa
+-a always,exit -F dir=/usr/lib64 -F perm=wa
+-a always,exit -F dir=/lib -F perm=wa
+-a always,exit -F dir=/usr/lib -F perm=wa
+
+## log
+-a always,exit -F dir=/var/log -F perm=r -F euid>=1000
+-a always,exit -F dir=/var/log -F perm=wa -F auid!=unset
+
+## spool
+-a always,exit -F path=/var/spool/cron -F perm=wa
+-a always,exit -F path=/var/spool/anacron -F perm=wa
+
+## www
+-a always,exit -F path=/var/www -F perm=wa
+
+## home
+-a always,exit -F dir=/home -F perm=r -F auid!=unset
+-a always,exit -F dir=/home -F perm=wa -F auid!=unset
+
+## root
+-a always,exit -F dir=/root -F perm=r -F auid!=unset
+-a always,exit -F dir=/root -F perm=wa -F auid!=unset
+
+## Finalize rules
+-e 1
